@@ -1,0 +1,25 @@
+version: '2.0'
+services:
+#  mysql:
+#    build: ./mysql/
+#    image: mysql-hyku
+#    ports:
+#      - 3306:3306
+#    environment:
+#      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+#    tty: true
+  redis:
+    image: daocloud.io/redis
+    ports:
+      - 6379:6379
+  gateway:
+    build: ../src
+    image: gateway
+    ports:
+      - 80:80
+    environment:
+      - PORT=80
+      - TOKEN=sjtu
+    tty: true
+    depends_on:
+      - redis

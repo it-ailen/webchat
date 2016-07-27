@@ -1,0 +1,10 @@
+# coding: utf-8
+
+
+C_EC_OK = 0
+C_EC_ARG_MISSING = 1
+C_EC_ARG_TYPE_WRONG = 2
+C_EC_CHECK_FAILED = 3
+
+
+C_EC_UNKNOWN = 999
