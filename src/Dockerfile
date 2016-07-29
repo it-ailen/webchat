@@ -1,4 +1,4 @@
-FROM daocloud.io/python:2
+FROM daocloud.io/python:2.7.11
 MAINTAINER Allen Zou <yalong.zou@hyku.com>
 
 COPY ./python /project
