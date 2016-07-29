@@ -20,7 +20,7 @@ services:
     environment:
       - PORT=80
       - TOKEN=sjtu
-      - MENU_CONF=/conf
+      - MENU_CONF=/conf/weixin-menu.hjson
     tty: true
     depends_on:
       - redis
