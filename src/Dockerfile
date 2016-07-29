@@ -7,4 +7,4 @@ COPY ./conf /conf
 WORKDIR /project
 RUN pip install -i https://pypi.douban.com/simple/ -r ./requirements.txt
 
-CMD ["python", "-m", "gateway.main"]
+CMD ["python", "-m", "gateway.main", "--config=/conf/test.hjson"]
