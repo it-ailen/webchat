@@ -5,6 +5,7 @@ import hashlib
 import env
 import logging
 import requests
+import json
 
 
 class WebChatBaseHandler(BaseHandler):
@@ -66,4 +67,16 @@ class WebChatMenuHandler(WebChatBaseHandler):
     def post(self):
         accessToken = self.fetch_access_token()
         menu = env.configMgr.get("menu")
-        logging.debug(menu)
+        logging.info(menu)
+        data = json.dumps(menu, ensure_ascii=False)
+        try:
+            resp = requests.post(self.C_WEIXIN_CGI + "/menu/create?access_toke=" + accessToken,
+                                 data=data)
+            res = resp.json()
+            if res["errcode"] != 0:
+                raise Exception("Wrong response from WebChat: %s" % resp.body)
+        except:
+            logging.exception("Fail to create menu")
+            raise CustomHTTPError(503,
+                                  error_code.C_EC_UNKNOWN,
+                                  cause="WebChat has gone")
