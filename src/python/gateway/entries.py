@@ -2,5 +2,5 @@
 import weixinhandlers
 
 entries = [
-    (r"^/weixin/auth/?$", weixinhandlers.AuthHandler),
+    (r"^/webchat/?$", weixinhandlers.WebChatHandler),
 ]

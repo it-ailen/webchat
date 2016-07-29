@@ -3,9 +3,10 @@
 from http import BaseHandler, CustomHTTPError, error_code
 import hashlib
 import env
+import logging
 
 
-class AuthHandler(BaseHandler):
+class WebChatHandler(BaseHandler):
     def check_signature(self, signature, timestamp, nonce, token):
         L = [token, timestamp, nonce]
         L.sort()
@@ -22,4 +23,14 @@ class AuthHandler(BaseHandler):
         else:
             raise CustomHTTPError(403,
                                   error_code.C_EC_CHECK_FAILED,
-                                  cause="Invalid request from fake WeiXin")
+                                  cause="Wrong request from WebChat")
+
+    def post(self):
+        signature = self.get_argument("signature")
+        timestamp = self.get_argument("timestamp")
+        nonce = self.get_argument("nonce")
+        if not self.check_signature(signature, timestamp, nonce, env.configMgr.get("token")):
+            raise CustomHTTPError(403,
+                                  error_code.C_EC_CHECK_FAILED,
+                                  cause="Wrong request from WebChat")
+        logging.info("args: %s", self.request.body)
