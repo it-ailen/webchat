@@ -68,13 +68,15 @@ class WebChatMenuHandler(WebChatBaseHandler):
         accessToken = self.fetch_access_token()
         menu = env.configMgr.get("menu")
         logging.info(menu)
-        data = json.dumps(menu, ensure_ascii=False)
+        # data = json.dumps(menu, ensure_ascii=False)
         try:
-            resp = requests.post(self.C_WEIXIN_CGI + "/menu/create?access_toke=" + accessToken,
-                                 data=data)
+            url = self.C_WEIXIN_CGI + "/menu/create?access_toke=" + accessToken
+            logging.info("url: %s", url)
+            resp = requests.post(url,
+                                 data=menu)
             res = resp.json()
             if res["errcode"] != 0:
-                raise Exception("Wrong response from WebChat: %s" % resp.body)
+                raise Exception("Wrong response from WebChat: %s" % resp.text)
         except:
             logging.exception("Fail to create menu")
             raise CustomHTTPError(503,
