@@ -4,15 +4,41 @@ from http import BaseHandler, CustomHTTPError, error_code
 import hashlib
 import env
 import logging
+import requests
 
 
-class WebChatHandler(BaseHandler):
+class WebChatBaseHandler(BaseHandler):
+    C_WEIXIN_CGI = "https://api.weixin.qq.com/cgi-bin"
+
+    C_GRANT_TYPE_CLIENT = "client_credential"
+
     def check_signature(self, signature, timestamp, nonce, token):
         L = [token, timestamp, nonce]
         L.sort()
         s = L[0] + L[1] + L[2]
         return hashlib.sha1(s).hexdigest() == signature
 
+    def fetch_access_token(self, type=C_GRANT_TYPE_CLIENT):
+        appId = env.configMgr.get("app_id")
+        secret = env.configMgr.get("secret")
+        data = {
+            "appid": appId,
+            "secret": secret,
+            "grant_type": type
+        }
+        try:
+            resp = requests.get(self.C_WEIXIN_CGI + "/token",
+                                params=data)
+            res = resp.json()
+            return res["access_token"]
+        except:
+            logging.exception("WeiXin error")
+            raise CustomHTTPError(503,
+                                  error_code.C_EC_UNKNOWN,
+                                  cause="Weixin has gone")
+
+
+class WebChatHandler(WebChatBaseHandler):
     def get(self):
         signature = self.get_argument("signature")
         timestamp = self.get_argument("timestamp")
@@ -34,3 +60,10 @@ class WebChatHandler(BaseHandler):
                                   error_code.C_EC_CHECK_FAILED,
                                   cause="Wrong request from WebChat")
         logging.info("args: %s", self.request.body)
+
+
+class WebChatMenuHandler(WebChatBaseHandler):
+    def post(self):
+        accessToken = self.fetch_access_token()
+        menu = env.configMgr.get("menu")
+        logging.debug(menu)

@@ -5,6 +5,8 @@ Created on 2015年10月14日
 @author: AilenZou
 '''
 import yaml
+import hjson
+import json
 
 
 class ConfigError(Exception):
@@ -14,10 +16,24 @@ class ConfigError(Exception):
 class ConfigMgr(object):
     def __init__(self, configFile=None):
         if configFile:
-            with open(configFile, 'r') as s:
-                self.__config = yaml.load(s)
+            self.__config = ConfigMgr.parse(configFile)
         else:
             self.__config = {}
+
+    @classmethod
+    def parse(cls, configFile):
+        if configFile and configFile.endswith("yaml"):
+            with open(configFile, 'r') as s:
+                return yaml.load(s)
+        elif configFile and configFile.endswith("hjson"):
+            with open(configFile, "r") as s:
+                return hjson.load(s)
+        elif configFile and configFile.endswith("json"):
+            with open(configFile, "r") as s:
+                return json.load(s)
+        else:
+            raise ConfigError("Unsupported configg")
+
 
     C_CONFIG_DEFAULT = "configure_default"
 
