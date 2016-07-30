@@ -6,12 +6,16 @@ import env
 import logging
 import requests
 import json
+import time
+from lxml import etree
 
 
 class WebChatBaseHandler(BaseHandler):
     C_WEIXIN_CGI = "https://api.weixin.qq.com/cgi-bin"
 
     C_GRANT_TYPE_CLIENT = "client_credential"
+
+    accessTokens = {}
 
     def check_signature(self, signature, timestamp, nonce, token):
         L = [token, timestamp, nonce]
@@ -20,6 +24,11 @@ class WebChatBaseHandler(BaseHandler):
         return hashlib.sha1(s).hexdigest() == signature
 
     def fetch_access_token(self, type=C_GRANT_TYPE_CLIENT):
+        now = long(time.time())
+        if WebChatBaseHandler.accessTokens.get(type, None) is not None:
+            oldToken = WebChatBaseHandler.accessTokens[type]
+            if oldToken["expired_time"] < now:
+                return oldToken["access_token"]
         appId = env.configMgr.get("app_id")
         secret = env.configMgr.get("secret")
         data = {
@@ -31,12 +40,21 @@ class WebChatBaseHandler(BaseHandler):
             resp = requests.get(self.C_WEIXIN_CGI + "/token",
                                 params=data)
             res = resp.json()
+            WebChatBaseHandler.accessTokens[type] = {
+                "access_token": res["access_token"],
+                "expired_time": res["expires_in"] + now - 300 # 余300s
+            }
             return res["access_token"]
         except:
             logging.exception("WeiXin error")
             raise CustomHTTPError(503,
                                   error_code.C_EC_UNKNOWN,
                                   cause="Weixin has gone")
+
+    def parse_xml_msg(self, src):
+        data = etree.fromstring(src)
+        logging.info(data)
+
 
 
 class WebChatHandler(WebChatBaseHandler):
@@ -61,6 +79,8 @@ class WebChatHandler(WebChatBaseHandler):
                                   error_code.C_EC_CHECK_FAILED,
                                   cause="Wrong request from WebChat")
         logging.info("args: %s", self.request.body)
+        data = self.parse_xml_msg(self.request.body)
+        logging.info("data: %s", data)
 
 
 class WebChatMenuHandler(WebChatBaseHandler):
@@ -70,7 +90,7 @@ class WebChatMenuHandler(WebChatBaseHandler):
         logging.info(menu)
         # data = json.dumps(menu, ensure_ascii=False)
         try:
-            url = self.C_WEIXIN_CGI + "/menu/create?access_toke=" + accessToken
+            url = self.C_WEIXIN_CGI + "/menu/create?access_token=" + accessToken
             logging.info("url: %s", url)
             resp = requests.post(url,
                                  data=menu)
@@ -82,3 +102,7 @@ class WebChatMenuHandler(WebChatBaseHandler):
             raise CustomHTTPError(503,
                                   error_code.C_EC_UNKNOWN,
                                   cause="WebChat has gone")
+
+    def get(self):
+        accessToken = self.fetch_access_token()
+
