@@ -7,6 +7,7 @@ import logging
 import requests
 import json
 import time
+import re
 from lxml import etree
 
 
@@ -56,6 +57,8 @@ class WebChatBaseHandler(BaseHandler):
         logging.info(data)
 
 
+matcher = re.compile(r"<!\[([^\[\]]+)\[([^\[\]]+)\]\]>")
+
 
 class WebChatHandler(WebChatBaseHandler):
     def get(self):
@@ -71,6 +74,9 @@ class WebChatHandler(WebChatBaseHandler):
                                   cause="Wrong request from WebChat")
 
     def post(self):
+        def parse_data(src):
+            match = matcher.match(src)
+            return match.group()
         signature = self.get_argument("signature")
         timestamp = self.get_argument("timestamp")
         nonce = self.get_argument("nonce")
@@ -81,6 +87,16 @@ class WebChatHandler(WebChatBaseHandler):
         logging.info("args: %s", self.request.body)
         data = self.parse_xml_msg(self.request.body)
         logging.info("data: %s", data)
+        msg = {
+            "ToUserName": parse_data(data.find("ToUserName").text),
+            "FromUserName": parse_data(data.find("FromUserName").text),
+            "CreateTime": long(data.find("CreateTime").text),
+            "MsgType": parse_data(data.find("MsgType").text),
+            "Content": parse_data(data.find("Content").text),
+            "MsgId": data.find("MsgId").text
+        }
+        logging.info("msg: %s", msg)
+
 
 
 class WebChatMenuHandler(WebChatBaseHandler):
