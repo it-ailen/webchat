@@ -66,7 +66,7 @@ class ClientAgent(object):
                                  ToUserName=etree.CDATA(event.FromUserName),
                                  CreateTime=str(long(time.time())),
                                  MsgType=etree.CDATA("text"),
-                                 Content=etree.CDATA(content))
+                                 Content=etree.CDATA(content.encode("utf-8")))
         elif event.Event == "unsubscribe":
             sql = "DELETE FROM `webchat_client` WHERE `userId`=?"
             conn.execute(sql, (event.FromUserName))
