@@ -2,6 +2,7 @@
 import common
 import logging
 from lxml import etree
+import time
 
 
 class UnknownHello(Exception):
@@ -10,54 +11,58 @@ class UnknownHello(Exception):
 
 
 class ClientAgent(object):
-    def __init__(self, autoResponse):
-        self.auto = common.Bundle.build_from_dict(autoResponse)
+    def __init__(self, dbMgr):
+        self.dbMgr = dbMgr
 
-    def handle_text(self, *msgs):
-        if msgs[0] == "?":
-            return self.list_all_auto_response()
-        lastLevel = self.auto
-        for msg in msgs:
-            try:
-                lastLevel = lastLevel[msg]
-            except:
-                raise UnknownHello(msg)
-        text = u""
-        if lastLevel.type == "directory":
-            if lastLevel.has("text"):
-                text += lastLevel.text
-            for k, v in lastLevel.directory.items.items():
-                text += k
-        elif lastLevel.type == "text":
-            return lastLevel.text
-
-    def list_all_auto_response(self):
-        textPieces = []
-        for k, v in self.auto.items.items():
-            if isinstance(k, unicode):
-                textPieces.append(k.encode("utf-8"))
-            else:
-                textPieces.append(k)
-            if v.has("text"):
-                if isinstance(v.text, unicode):
-                    textPieces.append(v.text.encode("utf-8"))
-                else:
-                    textPieces.append(v.text)
-            textPieces.append("\n")
-        return "".join(textPieces)
+    def handle_text(self, msg):
+        response = """
+            <xml>
+                <ToUserName><![CDATA[%(ToUserName)s]]></ToUserName>
+                <FromUserName><![CDATA[%(FromUserName)s]]></FromUserName>
+                <CreateTime>%(CreateTime)s</CreateTime>
+                <MsgType><![CDATA[%(MsgType)s]]></MsgType>
+                <Content><![CDATA[%(Content)s]]></Content>
+            </xml>
+        """
+        return response % {
+            "ToUserName": msg.FromUserName,
+            "FromUserName": msg.ToUserName,
+            "CreateTime": long(time.time()),
+            "MsgType": "text",
+            "Content": "You said: " + msg.Content
+        }
 
     def parse_xml_msg(self, src):
-        data = etree.fromstring(src)
-        logging.info(data)
-        logging.info("ToUserName: %s", data.find("ToUserName").text)
-        msg = {
-            "ToUserName": data.find("ToUserName").text,
-            "FromUserName": data.find("FromUserName").text,
-            "CreateTime": long(data.find("CreateTime").text),
-            "MsgType": data.find("MsgType").text,
-            "Content": data.find("Content").text,
-            "MsgId": data.find("MsgId").text
-        }
-        return common.Bundle.build(**msg)
+        tree = etree.fromstring(src)
+        msg = {}
+        for e in tree.findall(".*"):
+            msg[e.tag] = e.text
+        return common.Bundle.build_from_dict(msg)
 
+    def handle_event(self, event):
+        root = etree.Element("xml")
+        sub = etree.SubElement(root, "FromUserName")
+        sub.text = etree.CDATA(event.ToUserName)
+        sub = etree.SubElement(root, "ToUserName")
+        sub.text = etree.CDATA(event.FromUserName)
+        sub = etree.SubElement(root, "CreateTime")
+        sub.text = str(long(time.time()))
 
+        conn = self.dbMgr.get_connection()
+        if event.Event == "subscribe":
+            sql = "INSERT INTO `webchat_client`(`userId`, `subscribeTime`) " \
+                  " VALUES(?, ?)"
+            conn.execute(sql, (event.FromUserName, event.CreateTime))
+            conn.commit()
+            return "您好！欢迎订阅SJTU四川校友会"
+        elif event.Event == "unsubcribe":
+            sql = "DELETE FROM `webchat_client` WHERE `userId`=?"
+            conn.execute(sql, (event.FromUserName))
+            conn.commit()
+        elif event.Event == "CLICK":
+            # 自定义菜单事件
+            logging.info("Got CLICK.%s from %s",
+                         event.EventKey,
+                         event.FromUserName)
+        else:
+            logging.warn("Unhandled message: %s", event.json())

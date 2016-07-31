@@ -22,6 +22,7 @@ services:
       - TOKEN=sjtu
       - MENU_CONF=/conf/weixin-menu.hjson
       - AUTO_RESPONSE=/conf/auto-response-msg.hjson
+      - DB_FILE=/data/webchat.db
     tty: true
     depends_on:
       - redis

@@ -13,6 +13,7 @@ class ConfigureMgr(object):
     C_ENV_TOKEN = "TOKEN"
     C_ENV_WEBCHAT_MENU_CONF = "MENU_CONF"
     C_ENV_AUTO_RESPONSE = "AUTO_RESPONSE"
+    C_ENV_DB_FILE = "DB_FILE"
 
     def __init__(self, configFile=None):
         self._configMgr = config.ConfigMgr(configFile)
@@ -31,7 +32,10 @@ class ConfigureMgr(object):
             raise config.ConfigError("Missing environment: %s" % self.C_ENV_AUTO_RESPONSE)
         self._configMgr.set("auto_response",
                             config.ConfigMgr.parse(os.environ[self.C_ENV_AUTO_RESPONSE]))
-
+        if os.environ.get(self.C_ENV_DB_FILE, None) is None:
+            raise config.ConfigError("Missing environment: %s" % self.C_ENV_DB_FILE)
+        self._configMgr.set("db_file",
+                            os.environ[self.C_ENV_DB_FILE])
 
     def get(self, key):
         return self._configMgr.get(key)

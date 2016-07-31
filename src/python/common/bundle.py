@@ -4,6 +4,7 @@
 '''
 import logging
 import collections
+import json
 
 
 class Bundle(object):
@@ -34,6 +35,9 @@ class Bundle(object):
             else:
                 res[k] = v
         return res
+
+    def __str__(self):
+        return json.dumps(self.json(), ensure_ascii=False)
 
     def __getitem__(self, item):
         try:

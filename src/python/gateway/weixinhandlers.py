@@ -82,28 +82,12 @@ class WebChatHandler(WebChatBaseHandler):
         logging.info("args: %s", self.request.body)
         msg = env.clientAgent.parse_xml_msg(self.request.body)
         if msg.MsgType == "text":
-            try:
-                res = env.clientAgent.handle_text(msg.Content)
-            except agent.UnknownHello as e:
-                res = env.clientAgent.list_all_auto_response()
-            response = """
-                <xml>
-                    <ToUserName><![CDATA[%(ToUserName)s]]></ToUserName>
-                    <FromUserName><![CDATA[%(FromUserName)s]]></FromUserName>
-                    <CreateTime>%(CreateTime)s</CreateTime>
-                    <MsgType><![CDATA[%(MsgType)s]]></MsgType>
-                    <Content><![CDATA[%(Content)s]]></Content>
-                </xml>
-            """ % {
-                "ToUserName": msg.FromUserName,
-                "FromUserName": msg.ToUserName,
-                "CreateTime": long(time.time()),
-                "MsgType": "text",
-                "Content": res
-            }
-            self.write(response)
-
-
+            res = env.clientAgent.handle_text(msg)
+            self.write(res)
+        elif msg.MsgType == "event":
+            res = env.clientAgent.handle_event(msg)
+            if res is not None:
+                self.write(res)
 
 
 class WebChatMenuHandler(WebChatBaseHandler):
