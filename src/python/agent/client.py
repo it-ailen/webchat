@@ -43,7 +43,7 @@ class ClientAgent(object):
             msg[e.tag] = e.text
         return common.Bundle.build_from_dict(msg)
 
-    def handle_event(self, event):
+    def handle_event(self, event, appid):
         clicks = {
             "WEBCHAT_MENU_news": {
 
@@ -55,7 +55,13 @@ class ClientAgent(object):
                   " VALUES(?, ?)"
             conn.execute(sql, (event.FromUserName, event.CreateTime))
             conn.commit()
-            content = u"您好！欢迎订阅SJTU四川校友会"
+            oauthPattern = "https://open.weixin.qq.com/connect/oauth2/authorize?" \
+                           "appid=%(appid)s&redirect_uri=%(redirect_uri)s&" \
+                           "response_type=code&scope=SCOPE&state=STATE#wechat_redirect" % {
+                "appid": appid,
+                "redirect_uri": "http://test.hrmesworld.com/mates/register.html"
+            }
+            content = u"""您好！欢迎订阅SJTU四川校友会, <a href="%s">认证</a>""" % oauthPattern
             return self.wrap_xml(FromUserName=etree.CDATA(event.ToUserName),
                                  ToUserName=etree.CDATA(event.FromUserName),
                                  CreateTime=str(long(time.time())),

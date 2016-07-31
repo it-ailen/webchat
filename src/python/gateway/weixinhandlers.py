@@ -83,7 +83,7 @@ class WebChatHandler(WebChatBaseHandler):
         logging.info("args: %s", self.request.body)
         msg = env.clientAgent.parse_xml_msg(self.request.body)
         if msg.MsgType == "event":
-            res = env.clientAgent.handle_event(msg)
+            res = env.clientAgent.handle_event(msg, env.configMgr.get("app_id"))
             if res is not None:
                 self.write(res)
         else:
