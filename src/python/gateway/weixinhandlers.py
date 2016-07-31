@@ -9,7 +9,12 @@ import json
 import time
 import re
 from lxml import etree
+import common
+import env
+import agent
 
+
+matcher = re.compile(r"<!\[([^\[\]]+)\[([^\[\]]+)\]\]>")
 
 class WebChatBaseHandler(BaseHandler):
     C_WEIXIN_CGI = "https://api.weixin.qq.com/cgi-bin"
@@ -52,13 +57,6 @@ class WebChatBaseHandler(BaseHandler):
                                   error_code.C_EC_UNKNOWN,
                                   cause="Weixin has gone")
 
-    def parse_xml_msg(self, src):
-        data = etree.fromstring(src)
-        logging.info(data)
-
-
-matcher = re.compile(r"<!\[([^\[\]]+)\[([^\[\]]+)\]\]>")
-
 
 class WebChatHandler(WebChatBaseHandler):
     def get(self):
@@ -74,9 +72,6 @@ class WebChatHandler(WebChatBaseHandler):
                                   cause="Wrong request from WebChat")
 
     def post(self):
-        def parse_data(src):
-            match = matcher.match(src)
-            return match.group()
         signature = self.get_argument("signature")
         timestamp = self.get_argument("timestamp")
         nonce = self.get_argument("nonce")
@@ -85,17 +80,29 @@ class WebChatHandler(WebChatBaseHandler):
                                   error_code.C_EC_CHECK_FAILED,
                                   cause="Wrong request from WebChat")
         logging.info("args: %s", self.request.body)
-        data = self.parse_xml_msg(self.request.body)
-        logging.info("data: %s", data)
-        msg = {
-            "ToUserName": parse_data(data.find("ToUserName").text),
-            "FromUserName": parse_data(data.find("FromUserName").text),
-            "CreateTime": long(data.find("CreateTime").text),
-            "MsgType": parse_data(data.find("MsgType").text),
-            "Content": parse_data(data.find("Content").text),
-            "MsgId": data.find("MsgId").text
-        }
-        logging.info("msg: %s", msg)
+        msg = env.clientAgent.parse_xml_msg(self.request.body)
+        if msg.MsgType == "text":
+            try:
+                res = env.clientAgent.handle_text(msg.Content)
+            except agent.UnknownHello as e:
+                res = env.clientAgent.list_all_auto_response()
+            response = """
+                <xml>
+                    <ToUserName><![CDATA[%(ToUserName)s]]></ToUserName>
+                    <FromUserName><![CDATA[%(FromUserName)s]]></FromUserName>
+                    <CreateTime>%(CreateTime)s</CreateTime>
+                    <MsgType><![CDATA[%(MsgType)s]]></MsgType>
+                    <Content><![CDATA[%(Content)s]]></Content>
+                </xml>
+            """ % {
+                "ToUserName": msg.FromUserName,
+                "FromUserName": msg.ToUserName,
+                "CreateTime": long(time.time()),
+                "MsgType": "text",
+                "Content": res
+            }
+            self.write(response)
+
 
 
 

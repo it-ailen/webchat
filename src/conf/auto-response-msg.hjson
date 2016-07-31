@@ -1,0 +1,14 @@
+{
+    报名: {
+        // optional
+        text: "参加各种活动, <br><a href=http://baidu.com>点击参加</a>",
+        type: directory,
+        directory: {
+            "8月迎新送新会": {
+                // text
+                type: text,
+                text: "四川校友都可以<a href=http://bing.com>参加</a>喔~"
+            }
+        }
+    }
+}
