@@ -50,6 +50,7 @@ class WebChatBaseHandler(BaseHandler):
                 "access_token": res["access_token"],
                 "expired_time": res["expires_in"] + now - 300 # 余300s
             }
+            logging.info("access_token: %s", res["access_token"])
             return res["access_token"]
         except:
             logging.exception("WeiXin error")
@@ -81,13 +82,13 @@ class WebChatHandler(WebChatBaseHandler):
                                   cause="Wrong request from WebChat")
         logging.info("args: %s", self.request.body)
         msg = env.clientAgent.parse_xml_msg(self.request.body)
-        if msg.MsgType == "text":
-            res = env.clientAgent.handle_text(msg)
-            self.write(res)
-        elif msg.MsgType == "event":
+        if msg.MsgType == "event":
             res = env.clientAgent.handle_event(msg)
             if res is not None:
                 self.write(res)
+        else:
+            res = env.clientAgent.handle_message(msg)
+            self.write(res)
 
 
 class WebChatMenuHandler(WebChatBaseHandler):
@@ -100,7 +101,7 @@ class WebChatMenuHandler(WebChatBaseHandler):
             url = self.C_WEIXIN_CGI + "/menu/create?access_token=" + accessToken
             logging.info("url: %s", url)
             resp = requests.post(url,
-                                 data=menu)
+                                 json=menu)
             res = resp.json()
             if res["errcode"] != 0:
                 raise Exception("Wrong response from WebChat: %s" % resp.text)

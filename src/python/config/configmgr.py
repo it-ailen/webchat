@@ -7,10 +7,35 @@ Created on 2015年10月14日
 import yaml
 import hjson
 import json
+import logging
 
 
 class ConfigError(Exception):
     pass
+
+def encode_dict(d, codec='utf-8'):
+    ks = d.keys()
+    for k in ks:
+        oldVal = d.pop(k)
+        if isinstance(oldVal, unicode):
+            val = oldVal.encode(codec)
+        elif isinstance(oldVal, dict):
+            val = encode_dict(oldVal, codec)
+        elif isinstance(oldVal, (list, tuple)):
+            val = []
+            for each in oldVal:
+                if isinstance(each, dict):
+                    val.append(encode_dict(each, codec))
+                elif isinstance(each, unicode):
+                    val.append(each.encode(codec))
+                else:
+                    val.append(each)
+        else:
+            val = oldVal
+        if isinstance(k, unicode):
+            k = k.encode(codec)
+        d[k] = val
+    return d
 
 
 class ConfigMgr(object):
@@ -22,12 +47,19 @@ class ConfigMgr(object):
 
     @classmethod
     def parse(cls, configFile):
+        def hjson_to_json(src):
+            res = json.dumps(src)
+            res = json.loads(res)
+            logging.info(res)
+            res = encode_dict(res)
+            logging.info(res)
+            return res
         if configFile and configFile.endswith("yaml"):
             with open(configFile, 'r') as s:
                 return yaml.load(s)
         elif configFile and configFile.endswith("hjson"):
             with open(configFile, "r") as s:
-                return hjson.load(s)
+                return hjson_to_json(hjson.load(s))
         elif configFile and configFile.endswith("json"):
             with open(configFile, "r") as s:
                 return json.load(s)

@@ -1,22 +1,22 @@
 {
-    button: [
+    "button": [
         {
-            type: "click",
-            name: "母校音讯",
-            key: "WEBCHAT_MENU_news"
+            "name": "活动",
+            "sub_button": [
+                {
+                    "type": "view",
+                    "name": "近期活动",
+                    "url": "http://test.hrmesworld.com/activities/list.html"
+                }
+            ]
         },
         {
-            name: "活动",
-            sub_button: [
+            "name": "校友服务",
+            "sub_button": [
                 {
-                    type: "view",
-                    name: "测试",
-                    url: "http://www.soso.com"
-                },
-                {
-                    type: "click",
-                    name: "活动报名",
-                    key: "WEBCHAT_MENU_sign_up"
+                    "type": "view",
+                    "name": "校友认证",
+                    "url": "http://test.hrmesworld.com/mates/auth.html"
                 }
             ]
         }

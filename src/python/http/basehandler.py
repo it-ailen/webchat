@@ -6,7 +6,7 @@ import json
 
 
 class CustomHTTPError(tornado.web.HTTPError):
-    def __init__(self, error_code, cause=None, status_code=500, log_message=None, *args, **kwargs):
+    def __init__(self, status_code, error_code, cause=None, log_message=None, *args, **kwargs):
         super(CustomHTTPError, self).__init__(status_code, log_message, *args, **kwargs)
         self.error_code = error_code
         self.cause = cause
