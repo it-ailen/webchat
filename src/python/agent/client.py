@@ -62,9 +62,10 @@ class ClientAgent(object):
             conn.commit()
             oauthPattern = "https://open.weixin.qq.com/connect/oauth2/authorize?" \
                            "appid=%(appid)s&redirect_uri=%(redirect_uri)s&" \
-                           "response_type=code&scope=SCOPE&state=STATE#wechat_redirect" % {
+                           "response_type=code&scope=%(scope)s&state=STATE#wechat_redirect" % {
                 "appid": appid,
-                "redirect_uri": "http://test.hrmesworld.com/mates/register.html"
+                "redirect_uri": "http://test.hrmesworld.com/mates/register.html",
+                "scope": "snsapi_userinfo"
             }
             content = """您好！欢迎订阅SJTU四川校友会, <a href="%s">认证</a>""" % oauthPattern
             logging.info(content)
