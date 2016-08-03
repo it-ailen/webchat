@@ -11,6 +11,16 @@ class UnknownHello(Exception):
 
 
 class ClientAgent(object):
+    C_PATERN_text_msg = """
+        <xml>
+            <FromUserName><![CDATA[%(FromUserName)s]]></FromUserName>
+            <ToUserName><![CDATA[%(ToUserName)s]]></ToUserName>
+            <CreateTime>%(CreateTime)s</CreateTime>
+            <MsgType><![CDATA[text]]></MsgType>
+            <Content><![CDATA[%(Content)s]]></Content>
+        </xml>
+    """
+
     def __init__(self, dbMgr):
         self.dbMgr = dbMgr
 
@@ -44,11 +54,6 @@ class ClientAgent(object):
         return common.Bundle.build_from_dict(msg)
 
     def handle_event(self, event, appid):
-        clicks = {
-            "WEBCHAT_MENU_news": {
-
-            }
-        }
         conn = self.dbMgr.get_connection()
         if event.Event == "subscribe":
             sql = "INSERT INTO `webchat_client`(`userId`, `subscribeTime`) " \
@@ -61,15 +66,23 @@ class ClientAgent(object):
                 "appid": appid,
                 "redirect_uri": "http://test.hrmesworld.com/mates/register.html"
             }
-            content = u"""您好！欢迎订阅SJTU四川校友会, <a href="%s">认证</a>""" % oauthPattern
-            return self.wrap_xml(FromUserName=etree.CDATA(event.ToUserName),
-                                 ToUserName=etree.CDATA(event.FromUserName),
-                                 CreateTime=str(long(time.time())),
-                                 MsgType=etree.CDATA("text"),
-                                 Content=etree.CDATA(content.encode("utf-8")))
+            content = """您好！欢迎订阅SJTU四川校友会, <a href="%s">认证</a>""" % oauthPattern
+            logging.info(content)
+            # return self.wrap_xml(FromUserName=etree.CDATA(event.ToUserName),
+            #                      ToUserName=etree.CDATA(event.FromUserName),
+            #                      CreateTime=str(long(time.time())),
+            #                      MsgType=etree.CDATA("text"),
+            #                      Content=etree.CDATA(content))
+            return self.C_PATERN_text_msg % {
+                "FromUserName": event.ToUserName,
+                "ToUserName": event.FromUserName,
+                "CreateTime": long(time.time()),
+                "Content": content,
+            }
         elif event.Event == "unsubscribe":
-            sql = "DELETE FROM `webchat_client` WHERE `userId`=?"
-            conn.execute(sql, (event.FromUserName))
+            sql = "DELETE FROM `webchat_client` WHERE `userId`=\"%s\"" % event.FromUserName
+            logging.info("%s - %d - %s", event.FromUserName, len(event.FromUserName), type(event.FromUserName))
+            conn.execute(sql)
             conn.commit()
         elif event.Event == "CLICK":
             # 自定义菜单事件

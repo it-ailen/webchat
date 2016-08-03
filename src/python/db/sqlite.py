@@ -1,6 +1,7 @@
 # coding: utf-8
 from .sql import Connection
 import sqlite3
+import logging
 
 
 class Sqlite3Connection(Connection):
@@ -8,6 +9,7 @@ class Sqlite3Connection(Connection):
         self.conn = sqlite3.connect(path, *args, **kwargs)
 
     def execute(self, sql, *args, **kwargs):
+        logging.info("%s, %s", sql, args)
         return self.conn.execute(sql, *args, **kwargs)
 
     def commit(self):

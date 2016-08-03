@@ -96,7 +96,6 @@ class WebChatMenuHandler(WebChatBaseHandler):
         accessToken = self.fetch_access_token()
         menu = env.configMgr.get("menu")
         logging.info(menu)
-        # data = json.dumps(menu, ensure_ascii=False)
         try:
             url = self.C_WEIXIN_CGI + "/menu/create?access_token=" + accessToken
             logging.info("url: %s", url)
