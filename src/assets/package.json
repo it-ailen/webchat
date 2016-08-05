@@ -1,0 +1,19 @@
+{
+  "name": "sjtu",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "NODE_ENV=production webpack --progress --hide-modules --config build/webpack.prod.config.js"
+  },
+  "author": "Allen Zou",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-route": "^1.5.8",
+    "autoprefixer": "^6.4.0",
+    "cssnano": "^3.7.3",
+    "ng-cache-loader": "0.0.17",
+    "webpack": "^1.13.1"
+  },
+  "devDependencies": {}
+}

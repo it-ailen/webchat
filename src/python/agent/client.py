@@ -21,6 +21,8 @@ class ClientAgent(object):
         </xml>
     """
 
+    C_PAGE_AUTH_AND_REGISTER = "http://test.hrmesworld.com/assets/mates/register.html"
+
     def __init__(self, dbMgr):
         self.dbMgr = dbMgr
 
@@ -64,16 +66,11 @@ class ClientAgent(object):
                            "appid=%(appid)s&redirect_uri=%(redirect_uri)s&" \
                            "response_type=code&scope=%(scope)s&state=STATE#wechat_redirect" % {
                 "appid": appid,
-                "redirect_uri": "http://test.hrmesworld.com/mates/register.html",
+                "redirect_uri": self.C_PAGE_AUTH_AND_REGISTER,
                 "scope": "snsapi_userinfo"
             }
             content = """您好！欢迎订阅SJTU四川校友会, <a href="%s">认证</a>""" % oauthPattern
             logging.info(content)
-            # return self.wrap_xml(FromUserName=etree.CDATA(event.ToUserName),
-            #                      ToUserName=etree.CDATA(event.FromUserName),
-            #                      CreateTime=str(long(time.time())),
-            #                      MsgType=etree.CDATA("text"),
-            #                      Content=etree.CDATA(content))
             return self.C_PATERN_text_msg % {
                 "FromUserName": event.ToUserName,
                 "ToUserName": event.FromUserName,
@@ -96,3 +93,6 @@ class ClientAgent(object):
                 logging.warn("Undefined event key: %s", event.EventKey)
         else:
             logging.warn("Unhandled message: %s", event.json())
+
+    def mate_register(self, meta):
+

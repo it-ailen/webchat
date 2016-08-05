@@ -1,8 +1,10 @@
 # coding: utf-8
 
 import tornado.web
+import tornado.escape
 import error_code
 import json
+import logging
 
 
 class CustomHTTPError(tornado.web.HTTPError):
@@ -15,6 +17,14 @@ class CustomHTTPError(tornado.web.HTTPError):
 class BaseHandler(tornado.web.RequestHandler):
     C_KEY_ERROR = "error"
     C_KEY_CAUSE = "cause"
+
+    def prepare(self):
+        try:
+            jsonData = tornado.escape.json_decode(self.request.body)
+        except:
+            logging.exception("Invalid json body")
+            return
+        self.request.arguments.update(jsonData)
 
     def write_error(self, status_code, **kwargs):
         if "exc_info" in kwargs:

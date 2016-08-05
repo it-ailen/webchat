@@ -1,0 +1,50 @@
+1. click
+<xml>
+    <ToUserName><![CDATA[gh_47a544704b1b]]></ToUserName>
+    <FromUserName><![CDATA[oimWvweZQeHpl0kwXVFmBBpQRZdE]]></FromUserName>
+    <CreateTime>1469939273</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[CLICK]]></Event>
+    <EventKey><![CDATA[WEBCHAT_MENU_news]]></EventKey>
+</xml>
+
+2. link
+<xml>
+    <ToUserName><![CDATA[gh_47a544704b1b]]></ToUserName>
+    <FromUserName><![CDATA[oimWvweZQeHpl0kwXVFmBBpQRZdE]]></FromUserName>
+    <CreateTime>1469939424</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[VIEW]]></Event>
+    <EventKey><![CDATA[http://www.soso.com]]></EventKey>
+    <MenuId>431683473</MenuId>
+</xml>
+
+3. message
+<xml>
+    <ToUserName><![CDATA[gh_47a544704b1b]]></ToUserName>
+    <FromUserName><![CDATA[oimWvweZQeHpl0kwXVFmBBpQRZdE]]></FromUserName>
+    <CreateTime>1469858097</CreateTime>
+    <MsgType><![CDATA[text]]></MsgType>
+    <Content><![CDATA[ccc]]></Content>
+    <MsgId>6312992456807486711</MsgId>
+</xml>
+
+4. subscribe
+<xml>
+    <ToUserName><![CDATA[gh_47a544704b1b]]></ToUserName>
+    <FromUserName><![CDATA[oimWvweZQeHpl0kwXVFmBBpQRZdE]]></FromUserName>
+    <CreateTime>1470235775</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[subscribe]]></Event>
+    <EventKey><![CDATA[]]></EventKey>
+</xml>
+
+5. unsubscribe
+<xml>
+    <ToUserName><![CDATA[gh_47a544704b1b]]></ToUserName>
+    <FromUserName><![CDATA[oimWvweZQeHpl0kwXVFmBBpQRZdE]]></FromUserName>
+    <CreateTime>1470235661</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[unsubscribe]]></Event>
+    <EventKey><![CDATA[]]></EventKey>
+</xml>

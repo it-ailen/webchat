@@ -2,16 +2,12 @@
 
 from http import BaseHandler, CustomHTTPError, error_code
 import hashlib
-import env
 import logging
 import requests
-import json
 import time
 import re
-from lxml import etree
-import common
 import env
-import agent
+import datetime
 
 
 matcher = re.compile(r"<!\[([^\[\]]+)\[([^\[\]]+)\]\]>")
@@ -113,3 +109,29 @@ class WebChatMenuHandler(WebChatBaseHandler):
     def get(self):
         accessToken = self.fetch_access_token()
 
+
+class MatesHandler(WebChatBaseHandler):
+    def put(self):
+        logging.info(self.request.arguments)
+        args = {
+            "name": self.get_argument("name"),
+            "phone": self.get_argument("phone"),
+            "college": self.get_argument("college"),
+            "degree": self.get_argument("degree"),
+        }
+        startTime = self.get_argument("start_time")
+        endTime = self.get_argument("end_time")
+        try:
+            startTime = datetime.datetime.strptime(startTime, "yyyy/MM")
+            endTime = datetime.datetime.strptime(endTime, "yyyy/MM")
+        except:
+            raise CustomHTTPError(400,
+                                  error_code.C_EC_INVALID_ARGS,
+                                  cause="Invalid format of time, must be with format 'yyyy/MM'")
+        if startTime >= endTime:
+            raise CustomHTTPError(400,
+                                  error_code.C_EC_INVALID_ARGS,
+                                  cause="Invalid range of time")
+        args["startTime"] = startTime
+        args["endTime"] = endTime
+        env.clientAgent.mate_register(args)

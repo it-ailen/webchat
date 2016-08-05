@@ -1,0 +1,76 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-title">
+                    <span class="panel-heading">欢迎注册</span>
+                </div>
+                <div class="panel-body">
+                    <form name="form" role="form" class="form-horizontal" ng-submit="submit()">
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                姓名:
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="name" required class="form-control"
+                                    ng-model="mate.name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                电话:
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="phone" required class="form-control"
+                                    ng-model="mate.phone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                院系及专业:
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="college" required class="form-control"
+                                    ng-model="mate.college">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                学位(填在学校就读的最高学位即可):
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="degree" required class="form-control"
+                                    ng-model="mate.degree">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                入学时间(年/月):
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="start_time" required class="form-control"
+                                    placeholder="如 2008/09 " ng-model="mate.start_time">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 col-md-4 control-label">
+                                离校时间(年/月):
+                            </label>
+                            <div class="col-sm-6 col-md-6">
+                                <input type="text" name="end_time" required class="form-control"
+                                    placeholder="如 2012/09 " ng-model="mate.end_time">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                <input type="submit" class="btn btn-default" value="提交"
+                                    ng-disabled="form.$invalid || form.$pristine || submitStatus === 'submitting'">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
