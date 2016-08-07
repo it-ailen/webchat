@@ -9,7 +9,7 @@ function get_url_param(searchStr, name) {
     var r = searchStr.substr(1).match(reg);
     if (r != null) return r[2];
     return null;
-};
+}
 
 function routine($scope, $http, $location) {
     console.log(location)

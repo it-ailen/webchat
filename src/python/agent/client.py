@@ -4,6 +4,7 @@ import logging
 from lxml import etree
 import time
 from pymongo import MongoClient
+import datetime
 
 
 class UnknownHello(Exception):
@@ -21,14 +22,12 @@ class ClientAgent(object):
             <Content><![CDATA[%(Content)s]]></Content>
         </xml>
     """
-    C_WELCOME_words = """
-        感谢关注上海交大四川校友会。
+    C_WELCOME_words = """感谢关注上海交大四川校友会。
         回复以下命令:
         [注册] 注册校友信息
         [活动] 查看近期活动
     """
-    C_ARM_wrong_msg = """
-        亲，您说什么？
+    C_ARM_wrong_msg = """亲，您说什么？
         %s
     """ % C_WELCOME_words
 
@@ -61,13 +60,11 @@ class ClientAgent(object):
     def _auto_reply_assistant(self, msg):
         logging.debug("get msg: %s", msg.Content)
         if msg.Content == self.C_AUTO_RESPONSE_register:
-            content = """
-                尊敬的校友，欢迎您，请进入<a href="%s?webChatId=%s">此页面进行注册</a>
-            """ % (self.C_PAGE_AUTH_AND_REGISTER, msg.FromUserName)
+            content = """尊敬的校友，欢迎您，请进入<a href="%s?webChatId=%s">此页面进行注册</a>""" % (self.C_PAGE_AUTH_AND_REGISTER,
+                                                                                  msg.FromUserName)
         elif msg.Content == self.C_AUTO_RESPONSE_activity:
-            content = """
-                <a href="%s?webChatId=%s">活动列表</a>
-            """ % (self.C_PAGE_ACTIVITIES_LIST, msg.FromUserName)
+            content = """<a href="%s?webChatId=%s">活动列表</a>""" % (self.C_PAGE_ACTIVITIES_LIST,
+                                                                  msg.FromUserName)
         else:
             content = self.C_ARM_wrong_msg
         return self.C_PATERN_text_msg % {
@@ -158,3 +155,24 @@ class ClientAgent(object):
         tbl = self._db.mates
         tbl.insert_one(meta)
 
+    def activities_get(self):
+        tbl = self._db.activities
+        now = datetime.datetime.now()
+        al = tbl.find(filter={
+            "deadline": {"$gt": now}
+        })
+        return al
+
+    def activities_create(self, args):
+        tbl = self._db.activities
+        res = tbl.insert_one({
+            "title": args["title"],
+            "content": args["content"],
+            "cover": args["cover"],
+            "apply_begin": args["apply_begin"],
+            "apply_deadline": args["apply_deadline"],
+            "activity_time": args["activity_time"],
+            "address": args["address"],
+            "created_time": datetime.datetime.now()
+        })
+        return res.insert_id

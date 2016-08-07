@@ -1,0 +1,19 @@
+<div ng-repeat="activity in activities" class="row activity">
+    <a href="{{ activity.detailLink }}">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="img-area">
+                    <img src="{{ activity.cover }}">
+                </div>
+                <div class="meta-area">
+                    <div class="title">
+                        {{ activity.title }}
+                    </div>
+                    <div class="content">
+                        {{ activity.content }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

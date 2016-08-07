@@ -63,7 +63,7 @@
 	]);
 
 	app
-	    .controller("form.controller", __webpack_require__(3))
+	    .controller("form.controller", __webpack_require__(8))
 	;
 
 
@@ -31570,7 +31570,12 @@
 
 
 /***/ },
-/* 3 */
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */
 /***/ function(module, exports) {
 
 	/**
@@ -31584,7 +31589,7 @@
 	    var r = searchStr.substr(1).match(reg);
 	    if (r != null) return r[2];
 	    return null;
-	};
+	}
 
 	function routine($scope, $http, $location) {
 	    console.log(location)

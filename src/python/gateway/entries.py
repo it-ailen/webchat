@@ -3,6 +3,7 @@ import weixinhandlers
 import tornado.web
 import os
 import logging
+import activities_handlers
 
 curDir = os.path.dirname(os.path.abspath(__file__))
 srcDir = os.path.dirname(os.path.dirname(curDir))
@@ -19,6 +20,7 @@ entries = [
     (r"^/webchat/menu/?$", weixinhandlers.WebChatMenuHandler),
 
     (r"^/mates/?$", weixinhandlers.MatesHandler),
+    (r"^/activities/?$", activities_handlers.ActivitiesHandler),
 
     (r"^/assets/(.+)", tornado.web.StaticFileHandler, {
         "path": os.path.join(srcDir, "assets")

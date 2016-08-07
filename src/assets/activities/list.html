@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="activities.list">
+<head>
+    <meta charset="UTF-8">
+    <title>当前活动列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../dist/activities_list.js"></script>
+</head>
+<body ng-controller="activities.list">
+    <div class="container">
+        <div ng-repeat="activity in activities" class="row activity">
+            <a href="{{ activity.detail_link }}">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="img-area">
+                            <img src="{{ activity.poster }}">
+                        </div>
+                        <div class="meta-area">
+                            <div class="title">
+                                {{ activity.title }}
+                            </div>
+                            <div class="content">
+                                {{ activity.content }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
