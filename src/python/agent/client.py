@@ -38,8 +38,7 @@ class ClientAgent(object):
     C_STATUS_normal = "normal"
     C_STATUS_unsubscribed = "unsubscribed"
 
-    # C_HOST = "test.hrmesworld.com"
-    C_HOST = "localhost"
+    C_HOST = "test.hrmesworld.com"
 
     C_PAGE_AUTH_AND_REGISTER = "http://%s/assets/mates/register.html" % C_HOST
     C_PAGE_ACTIVITIES_LIST = "http://%s/assets/activities/list.html" % C_HOST
