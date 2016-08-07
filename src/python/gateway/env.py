@@ -8,22 +8,22 @@ import data
 
 configMgr = None
 clientAgent = None
-dbManager = None
+# dbManager = None
 
-dbConn = None
+# dbConn = None
 
 
 def init(configFile=None):
     global configMgr
     global clientAgent
-    global dbManager
-    global dbConn
+    # global dbManager
+    # global dbConn
     configMgr = configure.ConfigureMgr(configFile)
-    dbConn = db.sqlite.Sqlite3Connection(configMgr.get("db_file"))
-    dbManager = data.Manager(dbConn)
-    clientAgent = agent.ClientAgent(dbManager)
+    # dbConn = db.sqlite.Sqlite3Connection(configMgr.get("db_file"))
+    # dbManager = data.Manager(dbConn)
+    clientAgent = agent.ClientAgent(configMgr.get("mongo"))
 
 def finish():
-    global dbConn
+    # global dbConn
     logging.info("Finish now")
-    dbConn.close()
+    # dbConn.close()

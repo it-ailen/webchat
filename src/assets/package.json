@@ -8,8 +8,8 @@
   "author": "Allen Zou",
   "license": "ISC",
   "dependencies": {
-    "angular": "^1.5.8",
-    "angular-route": "^1.5.8",
+    "angular": "1.5.7",
+    "angular-route": "1.5.7",
     "autoprefixer": "^6.4.0",
     "cssnano": "^3.7.3",
     "ng-cache-loader": "0.0.17",

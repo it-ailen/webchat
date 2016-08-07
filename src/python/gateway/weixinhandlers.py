@@ -121,17 +121,20 @@ class MatesHandler(WebChatBaseHandler):
         }
         startTime = self.get_argument("start_time")
         endTime = self.get_argument("end_time")
+        logging.debug("start_time: %s", startTime)
         try:
-            startTime = datetime.datetime.strptime(startTime, "yyyy/MM")
-            endTime = datetime.datetime.strptime(endTime, "yyyy/MM")
+            startTime = datetime.datetime.strptime(startTime, "%Y/%m")
+            endTime = datetime.datetime.strptime(endTime, "%Y/%m")
         except:
+            logging.exception("Format error")
             raise CustomHTTPError(400,
                                   error_code.C_EC_INVALID_ARGS,
-                                  cause="Invalid format of time, must be with format 'yyyy/MM'")
+                                  cause="Invalid format of time, must be with format 'yyyy/mm'")
         if startTime >= endTime:
             raise CustomHTTPError(400,
                                   error_code.C_EC_INVALID_ARGS,
                                   cause="Invalid range of time")
         args["startTime"] = startTime
         args["endTime"] = endTime
+        args["webchatId"] = self.get_argument("webchat_id")
         env.clientAgent.mate_register(args)

@@ -8,21 +8,27 @@ services:
 #    environment:
 #      - MYSQL_ALLOW_EMPTY_PASSWORD=1
 #    tty: true
+  mongo:
+    image: daocloud.io/mongo
+    volumes:
+      - E:/virtual/data/mongo:/data
+    ports:
+      - 27017:27017
   redis:
     image: daocloud.io/redis
     ports:
       - 6379:6379
-  gateway:
-    build: ../src
-    image: gateway
-    ports:
-      - 80:80
-    environment:
-      - PORT=80
-      - TOKEN=sjtu
-      - MENU_CONF=/conf/weixin-menu.hjson
-      - AUTO_RESPONSE=/conf/auto-response-msg.hjson
-      - DB_FILE=/data/webchat.db
-    tty: true
-    depends_on:
-      - redis
+#  gateway:
+#    build: ../src
+#    image: gateway
+#    ports:
+#      - 80:80
+#    environment:
+#      - PORT=80
+#      - TOKEN=sjtu
+#      - MENU_CONF=/conf/weixin-menu.hjson
+#      - AUTO_RESPONSE=/conf/auto-response-msg.hjson
+#      - DB_FILE=/data/webchat.db
+#    tty: true
+#    depends_on:
+#      - redis

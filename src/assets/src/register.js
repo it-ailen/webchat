@@ -5,15 +5,15 @@
 
 require("angular");
 // require("mobile-angular-ui");
-require("angular-route");
+// require("angular-route");
 
-require("./partial/register.html");
+// require("./partial/register.html");
 
 
 var app = angular.module("mates.register", [
     // "mobile-angular-ui",
     // "mobile-angular-ui.gestures",
-    "ngRoute"
+    // "ngRoute"
 ]);
 
 app
@@ -21,17 +21,17 @@ app
 ;
 
 
-app
-    .config(function ($routeProvider) {
-        $routeProvider
-            .when("/",
-                {
-                    controller: "form.controller",
-                    templateUrl: "partial/register.html"
-                })
-        ;
-    })
-;
+// app
+//     .config(function ($routeProvider, $locationProvider) {
+//         $routeProvider
+//             .when("/",
+//                 {
+//                     controller: "form.controller",
+//                     templateUrl: "partial/register.html"
+//                 })
+//         ;
+//     })
+// ;
 
 
 module.exports = app;

@@ -18,13 +18,25 @@ class BaseHandler(tornado.web.RequestHandler):
     C_KEY_ERROR = "error"
     C_KEY_CAUSE = "cause"
 
+    def _encode(self, data):
+        res = {}
+        for k, v in data.items():
+            if isinstance(k, unicode):
+                k = k.encode("utf-8")
+            if isinstance(v, unicode):
+                v = v.encode("utf-8")
+            elif isinstance(v, dict):
+                v = self._encode(v)
+            res[k] = v
+        return res
+
     def prepare(self):
         try:
             jsonData = tornado.escape.json_decode(self.request.body)
         except:
             logging.exception("Invalid json body")
             return
-        self.request.arguments.update(jsonData)
+        self.request.arguments.update(self._encode(jsonData))
 
     def write_error(self, status_code, **kwargs):
         if "exc_info" in kwargs:

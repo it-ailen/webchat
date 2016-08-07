@@ -36,6 +36,10 @@ class ConfigureMgr(object):
             raise config.ConfigError("Missing environment: %s" % self.C_ENV_DB_FILE)
         self._configMgr.set("db_file",
                             os.environ[self.C_ENV_DB_FILE])
+        self._configMgr.setdefault("mongo", {
+            "host": "localhost",
+            "port": 27017
+        })
 
     def get(self, key):
         return self._configMgr.get(key)
